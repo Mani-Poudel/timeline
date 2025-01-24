@@ -1,0 +1,58 @@
+// Load saved timeline data from localStorage
+window.onload = function() {
+    const timelineData = JSON.parse(localStorage.getItem("timelineData"));
+    if (timelineData) {
+        renderTimeline(timelineData);
+    }
+};
+
+// Function to render the timeline
+function renderTimeline(data) {
+    const timelineContainer = document.querySelector('.timeline');
+    timelineContainer.innerHTML = "";  // Clear existing timeline
+
+    data.forEach(item => {
+        const timelineItem = document.createElement("div");
+        timelineItem.classList.add("timeline-item");
+
+        const content = `
+            <div class="timeline-content">
+                <h2>${item.title}</h2>
+                <p>Start Date: ${item.startDate}</p>
+                <p>End Date: ${item.endDate}</p>
+                <p>Description: ${item.description}</p>
+            </div>
+        `;
+        timelineItem.innerHTML = content;
+        timelineContainer.appendChild(timelineItem);
+    });
+}
+
+// Function to save data to localStorage
+function saveTimelineData() {
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    const timelineData = [];
+
+    timelineItems.forEach(item => {
+        const title = item.querySelector('h2').innerText;
+        const startDate = item.querySelector('p:nth-child(2)').innerText.split(": ")[1];
+        const endDate = item.querySelector('p:nth-child(3)').innerText.split(": ")[1];
+        const description = item.querySelector('p:nth-child(4)').innerText.split(": ")[1];
+
+        timelineData.push({ title, startDate, endDate, description });
+    });
+
+    localStorage.setItem("timelineData", JSON.stringify(timelineData));
+}
+
+// Example of adding a timeline item dynamically
+function addTimelineItem(title, startDate, endDate, description) {
+    const timelineData = JSON.parse(localStorage.getItem("timelineData")) || [];
+    const newItem = { title, startDate, endDate, description };
+    timelineData.push(newItem);
+    localStorage.setItem("timelineData", JSON.stringify(timelineData));
+    renderTimeline(timelineData);
+}
+
+// Example: Add a timeline item (you can call this with your form data)
+addTimelineItem("Task 1", "01/01/2025", "01/10/2025", "This is Task 1 description.");
